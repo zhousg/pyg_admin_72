@@ -21,6 +21,7 @@ i.iconfont {
 }
 
 
+
 .box-card{
   margin-top: 15px;
 }
@@ -32,4 +33,9 @@ i.iconfont {
   float: right;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+
+.el-step__title {
+  font-size: 12px;
 }

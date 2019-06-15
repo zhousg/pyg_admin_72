@@ -35,8 +35,9 @@
                 <!-- 渲染的位置 scope.row.attr_vals 是数组-->
                 <el-tag
                   closable
+                  @close="delAttrVals(scope.row, i)"
                   :key="item.attr_id"
-                  v-for="item in scope.row.attr_vals"
+                  v-for="(item, i) in scope.row.attr_vals"
                   >{{ item }}</el-tag
                 >
                 <el-input
@@ -45,6 +46,7 @@
                   size="small"
                   class="add_input"
                   @blur="addAttrVals(scope.row)"
+                  v-model="scope.row.inputVal"
                 ></el-input>
                 <el-tag
                   v-if="scope.row.tagVisiable"

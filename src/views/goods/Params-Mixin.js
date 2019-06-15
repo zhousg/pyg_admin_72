@@ -49,13 +49,49 @@ export default {
     this.getData();
   },
   methods: {
-    // 添加属性值
+    // 删除（修改属性的值） 属性值的其中一项
+    delAttrVals(row, i) {
+      //row.attr_vals.splice("起始索引", "删除几项");
+      row.attr_vals.splice(i, 1);
+      this.eidtAttrVals(row);
+    },
+    // 添加（修改属性的值） 属性值
     addAttrVals(row) {
       row.tagVisiable = true;
+      // 没有输入内容阻止
+      if (!row.inputVal) return false;
+      // attr_vals 追加一项值
+      row.attr_vals.push(row.inputVal);
+      // 更新后台数据
+      this.eidtAttrVals(row);
+    },
+    // 封装一个修改属性值的函数提供给 删除和添加 属性的值中的一项 使用
+    async eidtAttrVals(row) {
+      // 1. 三级分类ID   this.thirdCateId
+      // 2. 当前属性的ID row.attr_id
+      // 3. 当前属性的名称 row.attr_name
+      // 4. 当前属性的类型  row.attr_sel
+      // 5. 当前属性的值 row.attr_vals 但是字符串类型以,分隔
+      const {
+        data: { meta }
+      } = await this.$http.put(
+        `categories/${this.thirdCateId}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(",")
+        }
+      );
+      // 失败
+      if (meta.status !== 200) return this.$message.error("更新参数失败");
+      // 成功
+      this.$message.success("更新参数成功");
     },
     // 点击 +添加tag 按钮
     addTag(row) {
       row.tagVisiable = false;
+      // 打开input的时候把内容置为''
+      row.inputVal = "";
       // 获取焦点  操作dom需要在渲染完毕后才能操作
       this.$nextTick(() => {
         this.$refs[`add_input_${row.attr_id}`].focus();
@@ -140,6 +176,8 @@ export default {
           item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
           // 数据：控制当前行的 tag 的显示和隐藏
           item.tagVisiable = true;
+          // 数据：绑定输入的内容
+          item.inputVal = "";
         });
       }
 

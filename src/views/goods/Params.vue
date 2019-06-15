@@ -30,7 +30,31 @@
             >添加动态参数</el-button
           >
           <el-table :data="manyAttrs">
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <!-- 渲染的位置 scope.row.attr_vals 是数组-->
+                <el-tag
+                  closable
+                  :key="item.attr_id"
+                  v-for="item in scope.row.attr_vals"
+                  >{{ item }}</el-tag
+                >
+                <el-input
+                  v-if="!scope.row.tagVisiable"
+                  :ref="'add_input_' + scope.row.attr_id"
+                  size="small"
+                  class="add_input"
+                  @blur="addAttrVals(scope.row)"
+                ></el-input>
+                <el-tag
+                  v-if="scope.row.tagVisiable"
+                  :disable-transitions="true"
+                  class="add_btn"
+                  @click="addTag(scope.row)"
+                  >+添加tag</el-tag
+                >
+              </template>
+            </el-table-column>
             <el-table-column
               label="属性名称"
               prop="attr_name"
@@ -114,5 +138,14 @@ export default {
 <style scoped>
 .el-form {
   margin-top: 20px;
+}
+.el-tag {
+  margin-right: 10px;
+}
+.add_btn {
+  width: 80px;
+}
+.add_input {
+  width: 80px;
 }
 </style>

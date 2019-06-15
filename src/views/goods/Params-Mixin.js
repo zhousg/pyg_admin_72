@@ -29,6 +29,8 @@ export default {
         ]
       },
       dialogFormVisible: false
+      // 控制+添加tag按钮的显示和隐藏
+      // tagVisiable: true
     };
   },
   // 计算属性：当需要的一项数据，需要依赖data中的数据，通过一些逻辑得到
@@ -47,6 +49,18 @@ export default {
     this.getData();
   },
   methods: {
+    // 添加属性值
+    addAttrVals(row) {
+      row.tagVisiable = true;
+    },
+    // 点击 +添加tag 按钮
+    addTag(row) {
+      row.tagVisiable = false;
+      // 获取焦点  操作dom需要在渲染完毕后才能操作
+      this.$nextTick(() => {
+        this.$refs[`add_input_${row.attr_id}`].focus();
+      });
+    },
     // 删除参数
     delParams(attrId) {
       // 1. 确认框
@@ -117,6 +131,18 @@ export default {
         params: { sel: this.activeName }
       });
       if (meta.status !== 200) return this.$message.error("获取参数失败");
+
+      // 在动态参数列表渲染的时候  attr_vals 需求数组
+      if (this.activeName === "many") {
+        // data [{attr_name,attr_vals},{},{}]
+        data.forEach(item => {
+          // attr_vals 可能是空字符串 使用split(',')产生空的一项的数组
+          item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
+          // 数据：控制当前行的 tag 的显示和隐藏
+          item.tagVisiable = true;
+        });
+      }
+
       // 赋值 修改 manyAttrs 渲染
       // 赋值 修改 onlyAttrs 渲染
       // 根据当前的参数类型 去赋值

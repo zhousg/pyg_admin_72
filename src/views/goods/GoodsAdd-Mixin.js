@@ -1,4 +1,9 @@
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+import { quillEditor } from "vue-quill-editor";
 export default {
+  components: { quillEditor },
   data() {
     const checkCat = (rule, value, callback) => {
       if (this.cascaderValues.length !== 3) {
@@ -18,7 +23,9 @@ export default {
         goods_number: "",
         goods_weight: "",
         // 图片的信息 [{pic:'路径'},...]
-        pics: []
+        pics: [],
+        // 商品介绍
+        goods_introduce: ""
       },
       // 定义校验规则
       rules: {
@@ -59,6 +66,18 @@ export default {
     this.getData();
   },
   methods: {
+    // 保存商品
+    async saveGoods() {
+      // 合并参数
+      this.form.attrs = [...this.manyAttrs, ...this.onlyAttrs];
+      const {
+        data: { meta }
+      } = await this.$http.post("goods", this.form);
+      if (meta.status !== 201) return this.$message.error("保存商品信息失败");
+      // 成功 去列表查看
+      // 商品列表是一个组件  /goods 关联
+      this.$router.push("/goods");
+    },
     // 监听上传成功
     successImage(response) {
       // console.log(response);
@@ -68,6 +87,7 @@ export default {
     // 预览图片
     previewImage(file) {
       // 把对话框中的img的src属性  改成现在你预览的图片地址
+      // 地址需要完整路径才能预览
       this.dialogImageUrl = file.response.data.url;
       this.dialogVisible = true;
     },
@@ -137,7 +157,14 @@ export default {
     //   // this.stepActive = +tab.index;
     // },
     // 级联选择事件
-    cascaderChange() {},
+    cascaderChange() {
+      // 是第三级分类的时候才给 goods_cat 赋值
+      if (this.cascaderValues.length === 3) {
+        this.form.goods_cat = this.cascaderValues.join(",");
+      } else {
+        this.form.goods_cat = "";
+      }
+    },
     // 获取级联数据
     async getData() {
       const {

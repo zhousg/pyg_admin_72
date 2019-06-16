@@ -13,7 +13,7 @@
         <el-step title="商品内容"></el-step>
       </el-steps>
       <!-- tabs -->
-      <el-tabs @tab-click="changeTab" tab-position="left">
+      <el-tabs tab-position="left" :before-leave="beforeLeave">
         <el-tab-pane label="基本信息">
           <el-form
             style="margin-left:50px"
@@ -24,7 +24,10 @@
             autocomplete="off"
           >
             <el-form-item label="商品名称" prop="goods_name">
-              <el-input style="width:600px"></el-input>
+              <el-input
+                v-model="form.goods_name"
+                style="width:600px"
+              ></el-input>
             </el-form-item>
             <el-form-item label="商品分类" prop="goods_cat">
               <el-cascader
@@ -40,19 +43,68 @@
               ></el-cascader>
             </el-form-item>
             <el-form-item label="商品价格" prop="goods_price">
-              <el-input style="width:300px"></el-input>
+              <el-input
+                v-model="form.goods_price"
+                style="width:300px"
+              ></el-input>
             </el-form-item>
             <el-form-item label="商品数量" prop="goods_number">
-              <el-input style="width:300px"></el-input>
+              <el-input
+                v-model="form.goods_number"
+                style="width:300px"
+              ></el-input>
             </el-form-item>
             <el-form-item label="商品重量" prop="goods_weight">
-              <el-input style="width:300px"></el-input>
+              <el-input
+                v-model="form.goods_weight"
+                style="width:300px"
+              ></el-input>
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="商品参数">商品参数</el-tab-pane>
-        <el-tab-pane label="商品属性">商品属性</el-tab-pane>
-        <el-tab-pane label="商品图片">商品图片</el-tab-pane>
+        <el-tab-pane label="商品参数">
+          <el-form style="margin-left:50px" label-width="80px">
+            <el-form-item
+              :key="item.attr_id"
+              v-for="item in manyAttrs"
+              :label="item.attr_name"
+            >
+              <el-tag
+                :key="i"
+                v-for="(tag, i) in item.attr_vals
+                  ? item.attr_vals.split(',')
+                  : []"
+                >{{ tag }}</el-tag
+              >
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="商品属性">
+          <el-form style="margin-left:50px" label-width="180px">
+            <el-form-item
+              :key="item.attr_id"
+              v-for="item in onlyAttrs"
+              :label="item.attr_name"
+            >
+              <el-tag style="width:200px">{{ item.attr_vals }}</el-tag>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="商品图片">
+          <el-upload
+            :action="uploadUrl"
+            :headers="uploadHeaders"
+            list-type="picture-card"
+            :on-preview="previewImage"
+            :on-remove="removeImage"
+            :on-success="successImage"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="" />
+          </el-dialog>
+        </el-tab-pane>
         <el-tab-pane label="商品内容">商品内容</el-tab-pane>
       </el-tabs>
     </el-card>
@@ -72,5 +124,8 @@ export default {
 }
 .el-tabs {
   margin-top: 25px;
+}
+.el-tag {
+  margin-right: 10px;
 }
 </style>

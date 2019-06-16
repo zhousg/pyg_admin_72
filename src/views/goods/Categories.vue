@@ -20,7 +20,7 @@
             ></i>
           </template>
         </el-table-column>
-        <el-table-column prop="cat_level" label="分类等级">
+        <el-table-column label="分类等级">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.cat_level === 0">一级分类</el-tag>
             <el-tag type="success" v-if="scope.row.cat_level === 1"

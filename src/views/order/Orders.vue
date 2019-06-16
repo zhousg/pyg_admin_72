@@ -33,7 +33,11 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <el-button icon="el-icon-location" circle=""></el-button>
+          <el-button
+            icon="el-icon-location"
+            @click="dialogFormVisible = true"
+            circle=""
+          ></el-button>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -45,6 +49,23 @@
       >
       </el-pagination>
     </el-card>
+    <el-dialog title="查询物流" :visible.sync="dialogFormVisible">
+      <el-timeline>
+        <el-timeline-item
+          v-for="(activity, index) in activities"
+          :key="index"
+          :timestamp="activity.time"
+        >
+          {{ activity.context }}
+        </el-timeline-item>
+      </el-timeline>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
